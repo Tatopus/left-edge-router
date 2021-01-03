@@ -10,12 +10,13 @@
 
 // A data structure to store graph edges
 // Define maximum number of vertices in the graph
-#define NN 30
+#define NN 40
  
 // Data structure to store graph
 struct Graph {
     // An array of pointers to Node to represent adjacency list
     struct Node* head[NN];
+    int assigned[NN];
 };
  
 // A data structure to store adjacency list nodes of the graph

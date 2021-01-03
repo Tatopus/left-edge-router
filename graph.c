@@ -13,7 +13,6 @@
 void printGraph(struct Graph* graph)
 {
     
-    printf("print star:\n");
     int i;
     for (i = 0; i < NN; i++)
     {
@@ -30,41 +29,36 @@ void printGraph(struct Graph* graph)
             printf("\n");
         }
     }
+    printf("\n");
 }
 
 int isempty(struct Graph* graph, int index) {
     struct Node* ptr = graph->head[index];
-    if(ptr == NULL)
-        return 1;
-    else
-        return 0;
+    int flag = 1;
+    while(ptr != NULL) {
+        if(ptr -> dest != -1)
+            flag = 0 ;
+        ptr = ptr -> next;
+    }
+    
+    return flag;
 }
 
 void deletNode(struct Graph* graph, int src, int dest){
     struct Node* ptr = graph -> head[src];
     if(isempty(graph, src)){
-        printf("This list is emtpy");
+        
     }
-    
-    
-    struct Node* ptr2;
-     /*
-    while(ptr -> next != NULL){
-        ptr2 = ptr -> next;
-        if(ptr2 ->dest == dest) {
-            ptr -> next = ptr2 -> next;
-            free(ptr2);
+    else{
+        while(ptr != NULL) {
+            
+            if(ptr ->dest == dest){
+                ptr -> dest = -1;
+                break;
+            }
+            ptr = ptr -> next;
         }
     }
-    */
-    do {
-        if(ptr ->dest == dest){
-            ptr2 = ptr ->next;
-            graph -> head[src] = ptr2;
-            free(ptr);
-        }
-    }while(ptr -> next != NULL);
-    
 }
 
 struct Graph* createGraph(struct Edge edges[], int n)
