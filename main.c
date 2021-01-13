@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "graph.h"
+#include "queue.h"
 #define max_line 100
 
 
@@ -143,27 +144,39 @@ int main(int argc, const char * argv[]) {
     int clear_flag = 1;//用來確認即將放入的軌道是否為空的 1是空的, -1就不為空
     int assigned_count = 0;
     int assigned_flag = 0;
+    int track_roc = -1;
+    int track_start = 0;
+    Queue q;
+    init_queue(&q);
     
     //routing
     while(assigned_count < N) {
+        track_start = track_roc + 1;
+        int current_net;
         for(int i = 0; i< N; i++) {
+            current_net = i;
+            
             if(vcg->assigned[i] ==0){
                 assigned_flag = 0;
                 clear_flag = 1;
-                int current_net = i;
+                
                 if(isempty(vcg, current_net)){ // 如果ｖｃｇ是空的（沒有vertical constrain，就可以開始進行assign
-                    for(int j =0; j<N; j++) {//從track[N][length] 搜尋可以用的track
+                    enqueue(&q, current_net);
+                    for(int j =track_start; j<N; j++) {//從track[N][length] 搜尋可以用的track
                         if(track_flag[j] == -1 ){ //如果目前 track 是空的，直接把 net 放進去
                             track_flag[j] = 1; //表示track目前已被佔用;
                             assigned_flag = 1;
+                            track_roc ++;
                             for(int k = interval[current_net][0] ; k <= interval[current_net][1]; k++){ // 把track填上ｎｅｔ的數字
                                 track[j][k] = i;
                             }
                             //放進去後把node從graph中刪除
+                            /*
                             for(int z = 0; z< N; z++){
                                 deletNode(vcg, z, current_net);
                             }
                             printGraph(vcg);
+                             */
                         }
                         else{//如果net不是空的，檢查新的net有沒有辦法放進去目前的track中
                             int temp_left = interval[current_net][0];
@@ -180,10 +193,12 @@ int main(int argc, const char * argv[]) {
                                     for(int m= temp_left; m <= temp_right; m++){
                                         track[j][m] = i;
                                     }
+                                    /*
                                     for(int z = 0; z< N; z++){//放進去後把node從graph中刪除
                                         deletNode(vcg, z, current_net);
                                     }
                                     printGraph(vcg);
+                                     */
                                 }
                             }
                         }
@@ -198,6 +213,16 @@ int main(int argc, const char * argv[]) {
             if(assigned_count == N)
                 break;
         }// end of for(int i) finding a net with no vertical constrain
+        while(!empty(&q)) {
+            int temp_node = dequeue(&q);
+            for(int i = 0; i<N ; i++) {
+                if(i != temp_node){
+                    deletNode(vcg, i, temp_node);
+                }
+                
+            }
+            printGraph(vcg);
+        }
     }// end of while
     
     
@@ -228,6 +253,7 @@ int main(int argc, const char * argv[]) {
 
     
     free(vcg);
+    
     printf("number of assigned net : %d\n", assigned_count);
     return 0;
 }
