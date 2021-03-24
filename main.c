@@ -27,7 +27,7 @@ int main(int argc, const char * argv[]) {
     char c[max_line]={0};
     //read input file
     FILE *f1;
-    f1 = fopen("/Users/tatopus/Document/Git/GreedyRouter/444858_n30.dat", "r");
+    f1 = fopen(argv[1], "r");
     assert(f1 != NULL);
     fgets(c,max_line,f1);
     sscanf(c,"NumNet %d",&N);
